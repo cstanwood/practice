@@ -1,12 +1,11 @@
-#!/usr/bin/perl -w
+package TimeConversion;
 use strict;
-use 5.018;
-#use lib "./lib";
-#use TimeConversion qw(convert_time);
+use warnings;
 
-chomp( my $am_pm = <STDIN> );
-my $twenty_four_hour = convert_time($am_pm);
-say $twenty_four_hour;
+require Exporter;
+our @ISA = qw(Exporter);
+use base 'Exporter';
+our @EXPORT_OK = qw(convert_time);
 
 sub convert_time {
 
@@ -32,3 +31,4 @@ sub convert_time {
         $time;
     }
 }
+1;
