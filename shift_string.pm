@@ -15,16 +15,17 @@ open(TESTS, "<", "input01.txt") or die "Cannot open input01.txt";
 
 chomp( my $num_tests = <TESTS> );
 my @tests;
+my @results;
 for ( 1 .. $num_tests ) {
     chomp( my $string1 = <TESTS> );
     chomp( my $string2 = <TESTS> );
-    my @test = ( $string1, $string2 );
-    push( @tests, \@test );
+    my $result = lexical_min( $string1, $string2 );
+    push @results, $result;
 }
 
-for my $test (@tests) {
-    my $result = lexical_min( shift $test, shift $test );
-    say $result;
+open(RESULTS, ">", "my_output.txt") or die "Cannot open my_output.txt";
+for my $result (@results) {
+    print RESULTS $result;
 }
 
 sub lexical_min {
