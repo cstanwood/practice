@@ -11,8 +11,9 @@ our @EXPORT_OK = qw(lexical_min);
 #my $string1 = "ABACABA";
 #my $string2 = "ABACABA";
 #  AABABACABACABA
-  #AABBAACCAABBAA
-open( TESTS, "<", "input01.txt" ) or die "Cannot open input01.txt";
+#AABBAACCAABBAA
+
+open( TESTS, "<", shift @ARGV ) or die "Cannot open file for input";
 
 chomp( my $num_tests = <TESTS> );
 my @tests;
@@ -30,8 +31,8 @@ for my $result (@results) {
 }
 
 sub lexical_min {
-    my $string1 = shift @_;
-    my $string2 = shift @_;
+    my $string1 = shift;
+    my $string2 = shift;
     my $result;
 
     if ( length($string1) == 0 ) {
@@ -41,49 +42,33 @@ sub lexical_min {
         $result = $string1;
     }
     else {
-        my @array1 = split( //, $string1 );
-        my @array2 = split( //, $string2 );
-        my @result;
-        my $c1 = shift @array1;
-        my $c2 = shift @array2;
-        while ( defined($c1) and defined($c2) ) {
-            if ( $c1 lt $c2 ) {
-                push @result, $c1;
-                $c1 = shift @array1;
-                if ( not defined $c1 ) {
-                    push @result, $c2;
-                    $c2 = undef;
-                    $result = join( "", @result ) . join( "", @array2 );
+        my $index1;
+        my $index2;
+        while ( $index1 <= length($string1) and $index2 <= length($string2) ) {
+            no warnings;
+            my $next1 = substr( $string1, $index1, 1 );
+            my $next2 = substr( $string2, $index2, 1 );
+            given ( $next1 cmp $next2 ) {
+                when ( -1 or 0 ) {
+                    $result .= $next1;
+                    if ( ++$index1 > length($string1) ) {
+                        $result .=
+                          substr( $string2, $index2,
+                            length($string2) - $index2 );
+                    }
                 }
-            }
-            #elsif ( $c1 eq $c2 ) {
-                #push @result, $c1;
-                #push @result, $c2;
-                ##$c1 = shift @array1;
-            #    $c2 = shift @array2;
-            #    if ( not defined $c1 ) {
-            #        push @result, $c2;
-            #        $c2 = undef;
-            #        $result = join( "", @result ) . join( "", @array2 );
-            #    }
-            #    elsif ( not defined $c2 ) {
-            #        push @result, $c1;
-            #        $c1 = undef;
-            #        $result = join( "", @result ) . join( "", @array1 );
-            #    }
-            #}
-            elsif ( $c1 eq $c2 or $c1 gt $c2 ) {
-                push @result, $c2;
-                $c2 = shift @array2;
-                if ( not defined $c2 ) {
-                    push @result, $c1;
-                    $c1 = undef;
-                    $result = join( "", @result ) . join( "", @array1 );
+                when (1) {
+                    $result .= $next2;
+                    if ( ++$index1 > length($string1) ) {
+                        $result .=
+                          substr( $string2, $index2,
+                            length($string2) - $index2 );
+                    }
                 }
+                use warnings;
             }
         }
     }
     $result;
 }
-
 1;
